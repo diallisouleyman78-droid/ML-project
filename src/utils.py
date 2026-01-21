@@ -18,19 +18,48 @@ def save_object(file_path, obj):
         raise CustomException(e, sys)
     #saving preprocessor pickle in a file disk
 
-def evaluate_models(X_train, y_train, X_test, y_test, models):
+#trains the models temporarily and return the r2 score
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import r2_score
+import sys
+
+def evaluate_models(X_train, y_train, X_test, y_test, models, param_grids):
     try:
         report = {}
 
         for model_name, model in models.items():
-            model.fit(X_train, y_train)
+            print(f"🔍 Tuning {model_name}...")
 
-            y_pred = model.predict(X_test)
+            params = param_grids.get(model_name, {})
+
+            if params:
+                search = GridSearchCV(
+                    estimator=model,
+                    param_grid=params,
+                    scoring="r2",
+                    cv=5,
+                    n_jobs=-1
+                )
+                search.fit(X_train, y_train)
+
+                best_model = search.best_estimator_
+                best_params = search.best_params_
+            else:
+                # fallback (no hyperparams provided)
+                best_model = model
+                best_model.fit(X_train, y_train)
+                best_params = None
+
+            y_pred = best_model.predict(X_test)
             score = r2_score(y_test, y_pred)
 
-            report[model_name] = score
+            report[model_name] = {
+                "r2_score": score,
+                "best_params": best_params
+            }
 
         return report
 
     except Exception as e:
         raise CustomException(e, sys)
+

@@ -79,10 +79,12 @@ class DataTransformation:
             input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df) # fit and transform on training data
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df) # only transform on testing data 
 
+            #combines the target feature and the input features into a single numpy array
             train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)] # concatenate numpy arrays
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
             logging.info("Concatenating input and target features array")
 
+            #save the preprocessor as a pickle file
             save_object(
                 file_path=self.data_transformation_config.preprocessor_obj_file_path,
                 obj=preprocessing_obj
