@@ -6,6 +6,9 @@ from src.exception import CustomException
 import dill
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import r2_score
+import sys
 
 def save_object(file_path, obj):
     try:
@@ -19,9 +22,7 @@ def save_object(file_path, obj):
     #saving preprocessor pickle in a file disk
 
 #trains the models temporarily and return the r2 score
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import r2_score
-import sys
+
 
 def evaluate_models(X_train, y_train, X_test, y_test, models, param_grids):
     try:
