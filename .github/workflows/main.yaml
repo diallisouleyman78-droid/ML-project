@@ -80,6 +80,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # 🔹 Pre-clean Docker to avoid disk issues
+      - name: Pre-clean Docker
+        run: |
+          docker rm -f mltest || true
+          docker system prune -af --volumes || true
+
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
